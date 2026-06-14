@@ -1,0 +1,13 @@
+[project]
+name = "pr-hnsw"
+version = "0.1.0"
+description = "Reparación de subgrafos inducidos por predicados para búsqueda HNSW filtrada."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "Gustavo Adolfo Patiño Toro"}]
+dependencies = ["numpy", "pandas", "scipy", "scikit-learn", "networkx", "pyyaml", "tqdm", "matplotlib", "pytest", "faiss-cpu", "hnswlib"]
+
+[tool.pytest.ini_options]
+testpaths = ["pruebas"]
+python_files = ["test_*.py"]
+addopts = "-q"

@@ -1,0 +1,117 @@
+\documentclass[12pt,letterpaper,oneside]{report}
+
+% Plantilla LaTeX para tesis de maestría
+% Maestría en Análisis de Datos y Sistemas Inteligentes
+% Universidad Santo Tomás, Bucaramanga
+% Opción de grado: Proyecto de Investigación Aplicada
+% 2026
+
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{float}
+\usepackage{csquotes}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% Bibliografía.
+\usepackage[style=apa,backend=biber,sortcites=true,sorting=nyt]{biblatex}
+\DeclareLanguageMapping{spanish}{spanish-apa}
+\addbibresource{referencias.bib}
+
+\geometry{left=3cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\onehalfspacing
+\setlength{\parindent}{1.25cm}
+\setlength{\parskip}{0pt}
+\setlength{\headheight}{14.5pt}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue,
+    pdftitle={Optimización de la Navegación en Grafos HNSW},
+    pdfauthor={Nombre del autor}
+}
+
+% Cornisa / encabezado institucional
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\MakeUppercase{RESUMEN DEL TÍTULO}}
+\rhead{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+\titleformat{\chapter}{\normalfont\bfseries\centering}{Capítulo \thechapter.}{0.5em}{}
+\titleformat{\section}{\normalfont\bfseries}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\normalfont\bfseries}{\thesubsection}{0.5em}{}
+
+% Datos editables
+\newcommand{\tituloTrabajo}{Optimización de la Navegación en Grafos HNSW mediante Poda Dinámica y Reparación de Subgrafos Inducidos por Predicados para Consultas Híbridas en Entornos con Recursos Limitados}
+\newcommand{\autorTrabajo}{Gustavo Adolfo Patiño Toro}
+\newcommand{\directorTrabajo}{Nombre del Director}
+\newcommand{\tituloDirector}{Título académico más alto}
+\newcommand{\codirectorTrabajo}{Nombre del Co-director}
+\newcommand{\tituloCodirector}{Título académico más alto}
+\newcommand{\anioTrabajo}{2026}
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\bfseries\Large \tituloTrabajo \par}
+    \vspace{2cm}
+    {\large \autorTrabajo \par}
+    \vspace{2cm}
+    {Trabajo de grado para optar al título de\par}
+    {\bfseries Magíster en Análisis de Datos y Sistemas Inteligentes\par}
+    \vspace{2cm}
+    {\bfseries Director\par}
+    {\directorTrabajo\par}
+    {\tituloDirector\par}
+    \vspace{1cm}
+    {\bfseries Co-director\par}
+    {\codirectorTrabajo\par}
+    {\tituloCodirector\par}
+    \vfill
+    {\bfseries Universidad Santo Tomás, Bucaramanga\par}
+    {División de Ingenierías y Arquitectura\par}
+    {Maestría en Análisis de Datos y Sistemas Inteligentes\par}
+    {\anioTrabajo\par}
+\end{titlepage}
+\hypersetup{pageanchor=true}
+
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\include{capitulos/01_planteamiento_problema}
+\include{capitulos/02_marco_teorico_estado_arte}
+\include{capitulos/03_metodologia}
+\include{capitulos/04_desarrollo_solucion}
+\include{capitulos/05_resultados_validacion}
+\include{capitulos/06_conclusiones_recomendaciones}
+
+\nocite{*}
+\printbibliography[title={Referencias}]
+
+\appendix
+\include{anexos/anexo_a_documentacion_tecnica}
+
+\end{document}

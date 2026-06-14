@@ -1,0 +1,211 @@
+# =========================================================
+# PR-HNSW — .gitignore
+# Proyecto de tesis: HNSW filtrado / PR-HNSW
+# =========================================================
+
+
+# =========================================================
+# Python
+# =========================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+.eggs/
+dist/
+build/
+site/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+
+# =========================================================
+# Entornos virtuales
+# =========================================================
+.venv/
+venv/
+env/
+ENV/
+.env
+.env.*
+!.env.example
+
+
+# =========================================================
+# Jupyter / Colab
+# =========================================================
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+colab_outputs/
+notebooks/.ipynb_checkpoints/
+
+
+# =========================================================
+# Resultados experimentales pesados
+# =========================================================
+resultados/crudos/*
+resultados/procesados/*
+resultados/figuras/*
+experimentos/**/salidas/*
+experimentos/**/resultados/*
+experimentos/**/logs/*
+
+# Mantener carpetas vacías versionadas
+!resultados/crudos/.gitkeep
+!resultados/procesados/.gitkeep
+!resultados/figuras/.gitkeep
+
+
+# =========================================================
+# Datasets y archivos grandes
+# =========================================================
+datos/
+data/
+datasets/
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.parquet
+*.feather
+*.h5
+*.hdf5
+*.bin
+*.fvecs
+*.ivecs
+*.bvecs
+*.vec
+*.index
+*.faiss
+*.hnsw
+*.ann
+*.mmap
+
+
+# =========================================================
+# Modelos, embeddings y checkpoints
+# =========================================================
+modelos/
+models/
+checkpoints/
+embeddings/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+
+
+# =========================================================
+# Logs
+# =========================================================
+*.log
+logs/
+registro/
+registros/
+
+
+# =========================================================
+# LaTeX
+# =========================================================
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.idx
+*.ilg
+*.ind
+*.ist
+*.nav
+*.snm
+*.vrb
+*.xdv
+
+# PDF generado de la tesis
+tesis/*.pdf
+tesis/**/*.pdf
+
+# Mantener figuras fuente si son livianas
+!tesis/figuras/.gitkeep
+!tesis/tablas/.gitkeep
+
+
+# =========================================================
+# Overleaf
+# =========================================================
+*.synctex.gz
+.overleaf/
+
+
+# =========================================================
+# Archivos temporales de editores
+# =========================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+
+# =========================================================
+# Sistema operativo
+# =========================================================
+.AppleDouble
+.LSOverride
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+
+# =========================================================
+# Archivos comprimidos generados
+# =========================================================
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+
+# =========================================================
+# Credenciales / secretos
+# =========================================================
+secrets/
+credenciales/
+credentials/
+*.pem
+*.key
+*.crt
+*.p12
+*.json.secret
+service-account*.json
+
+
+# =========================================================
+# Mantener ejemplos y documentación
+# =========================================================
+!configuraciones/*.yaml
+!documentos/**/*.md
+!tesis/**/*.tex
+!tesis/**/*.bib
+!README.md
+!pyproject.toml
+!Makefile

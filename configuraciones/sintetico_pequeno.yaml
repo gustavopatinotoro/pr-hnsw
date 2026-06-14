@@ -1,0 +1,21 @@
+experimento:
+  nombre: sintetico_pequeno
+  semilla_dataset: 42
+  semilla_consultas: 43
+  semilla_indice: 44
+  semilla_reparacion: 45
+
+datos:
+  n_vectores: 1000
+  dimension: 32
+  n_consultas: 100
+  n_predicados: 10
+
+indice:
+  tipo: hnsw
+  M: 8
+  ef_construction: 100
+  ef_search: 50
+
+evaluacion:
+  k: 10

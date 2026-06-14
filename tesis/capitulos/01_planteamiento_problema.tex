@@ -1,0 +1,118 @@
+\chapter{Planteamiento del problema}
+
+Este capítulo presenta el contexto general y específico del problema que motiva el proyecto, así como su relevancia académica y aplicada dentro del campo de la analítica de datos y los sistemas inteligentes. Conforme a la plantilla institucional para la opción de grado de investigación aplicada, se desarrollan el contexto del problema, la descripción clara y delimitada de la problemática, la justificación, el objetivo general, los objetivos específicos y el alcance del proyecto. La redacción se apoya en el corpus científico inicial de la investigación, compuesto por trabajos fundacionales y recientes sobre búsqueda aproximada de vecinos más cercanos, grafos HNSW, búsqueda filtrada, bases de datos vectoriales y sistemas ANN de gran escala.
+
+\section{Contexto del problema}
+
+La búsqueda de información en grandes colecciones de datos ha evolucionado desde modelos centrados en coincidencia léxica hacia enfoques de recuperación semántica soportados por representaciones vectoriales densas, conocidas como \textit{embeddings}. En estos sistemas, documentos, imágenes, productos, usuarios o fragmentos de texto se representan como vectores en espacios de alta dimensionalidad, donde la cercanía geométrica funciona como aproximación de similitud semántica. En consecuencia, la búsqueda de vecinos más cercanos se ha convertido en una operación fundamental para recuperación de información, recomendación, minería de datos, visión por computador y sistemas inteligentes \parencite{wang2021comprehensive,subramanya2019diskann}.
+
+El problema exacto de vecinos más cercanos puede resolverse comparando una consulta contra todos los elementos del dataset; sin embargo, este enfoque escala linealmente con el número de elementos y se vuelve costoso en colecciones grandes o de alta dimensionalidad. Por ello, los métodos de búsqueda aproximada de vecinos más cercanos, o \textit{Approximate Nearest Neighbor Search} (ANNS), relajan parcialmente la exactitud para mejorar el tiempo de consulta y reducir el costo computacional \parencite{malkov2020efficient,subramanya2019diskann}. En este contexto, el rendimiento de un método ANN suele evaluarse mediante el equilibrio entre recall, latencia, memoria y tiempo de construcción.
+
+Dentro de los métodos ANNS, los enfoques basados en grafos han alcanzado una posición destacada. Estos métodos construyen un grafo de proximidad donde los vértices representan elementos del dataset y las aristas conectan puntos cercanos. La búsqueda se realiza mediante navegación sobre el grafo, avanzando desde un punto de entrada hacia vecinos progresivamente más cercanos a la consulta. La revisión experimental de \textcite{wang2021comprehensive} muestra que los métodos basados en grafos constituyen una de las familias líderes en ANNS y que su rendimiento depende de componentes como construcción, selección de vecinos, conectividad, adquisición de semillas y estrategia de búsqueda.
+
+Uno de los métodos más influyentes de esta familia es \textit{Hierarchical Navigable Small World} (HNSW). \textcite{malkov2020efficient} presentan HNSW como una estructura completamente basada en grafos, organizada en múltiples capas jerárquicas, donde los enlaces de largo alcance facilitan el desplazamiento global y los enlaces de nivel inferior permiten una búsqueda local más fina. Esta separación de escalas permite que HNSW alcance alta eficiencia y buen recall en múltiples escenarios de búsqueda vectorial. Por esta razón, HNSW se ha convertido en una referencia central para bibliotecas ANN, bases de datos vectoriales y sistemas de búsqueda semántica.
+
+No obstante, la búsqueda vectorial moderna rara vez opera únicamente sobre similitud geométrica. En aplicaciones reales, especialmente en bases de datos vectoriales y sistemas de recuperación aumentada por generación, las consultas suelen combinar similitud semántica con restricciones estructuradas sobre metadatos. Por ejemplo, una consulta puede requerir documentos semánticamente similares, pero restringidos por fecha, categoría, usuario, tenant, permisos, idioma, jurisdicción o etiquetas específicas. Este tipo de consulta se conoce como búsqueda híbrida, búsqueda vectorial filtrada o \textit{Filtered Approximate Nearest Neighbor Search} (FANNS) \parencite{amanbayev2026filtered,patel2024acorn,gollapudi2023filtered}.
+
+La búsqueda filtrada introduce una tensión adicional: el índice vectorial puede estar optimizado para navegar el espacio completo, pero la consulta exige recuperar vecinos dentro de un subconjunto definido por predicados. \textcite{amanbayev2026filtered} señalan que las estrategias genéricas de filtrado, como prefiltrado, post-filtrado y filtrado durante ejecución, presentan comportamientos distintos según el índice, el sistema y la selectividad del filtro. Además, sus resultados indican que decisiones de arquitectura del motor, como adaptaciones internas o elección del plan de consulta, pueden dominar el rendimiento bruto del índice. Esto implica que el problema no puede entenderse únicamente como una cuestión de distancia vectorial.
+
+La literatura reciente también ha propuesto soluciones especializadas para búsqueda filtrada. \textcite{gollapudi2023filtered} presentan Filtered-DiskANN, que incorpora metadatos de etiquetas en la construcción de grafos para responder consultas ANNS filtradas con mayor eficiencia. Por su parte, \textcite{patel2024acorn} proponen ACORN, un método \textit{predicate-agnostic} construido sobre HNSW que introduce la idea de \textit{predicate-subgraph traversal}, es decir, recorrer subgrafos inducidos por los nodos que satisfacen el predicado de la consulta. Estos trabajos muestran que la interacción entre estructura de grafo y predicados es un aspecto central de la búsqueda híbrida.
+
+Sin embargo, las soluciones especializadas pueden introducir costos adicionales o restricciones de aplicabilidad. ACORN busca soportar predicados amplios y no conocidos de antemano mediante modificaciones a HNSW, mientras que Filtered-DiskANN se orienta a índices con soporte nativo para filtros de etiquetas \parencite{patel2024acorn,gollapudi2023filtered}. En paralelo, sistemas de gran escala como DiskANN muestran que los diseños ANN deben considerar explícitamente restricciones de memoria, latencia y almacenamiento cuando se busca escalar a colecciones masivas \parencite{subramanya2019diskann}. Esta combinación de factores motiva una pregunta aplicada: si HNSW pierde efectividad bajo filtros estrictos, ¿es posible mejorar su navegabilidad filtrada mediante reparación topológica ligera, sin construir un sistema vectorial completo ni densificar globalmente el índice?
+
+Este proyecto se sitúa en esa brecha. Su interés principal es analizar la degradación de la navegación en HNSW cuando se aplican filtros estrictos y proponer una variante ligera, reproducible y evaluable que diagnostique y repare parcialmente dicha degradación mediante mecanismos de reparación topológica de subgrafos inducidos por predicados.
+
+\section{Descripción clara y delimitada de la problemática}
+
+El problema central de esta investigación es la pérdida de efectividad de HNSW en consultas híbridas con filtros estrictos, especialmente cuando se usa una estrategia de post-filtrado o cuando el subconjunto de nodos válidos pierde conectividad navegable dentro del grafo original.
+
+En una búsqueda HNSW tradicional, la consulta se desplaza por el grafo siguiendo vecinos cercanos al vector de consulta. Este proceso asume que la estructura del grafo ofrece rutas navegables hacia los vecinos más relevantes. La propuesta original de HNSW se apoya precisamente en una jerarquía de grafos de proximidad y en una estrategia de navegación desde capas superiores hacia la capa base \parencite{malkov2020efficient,patel2024acorn}. Sin embargo, cuando se introduce un predicado de filtrado, no todos los nodos visitados son válidos. El objetivo deja de ser encontrar simplemente los vecinos más cercanos en todo el dataset y pasa a ser encontrar los vecinos más cercanos dentro del subconjunto que cumple el filtro.
+
+Formalmente, dado un conjunto de vectores \(X = \{x_1, x_2, \ldots, x_n\}\), un grafo HNSW \(G=(V,E)\), una consulta vectorial \(q\), un predicado \(p\) y un valor \(k\), el objetivo de la búsqueda filtrada es recuperar los \(k\) vecinos más cercanos a \(q\) dentro del subconjunto:
+\[
+X_p = \{x_i \in X \mid p(x_i) = 1\}.
+\]
+
+El problema aparece cuando el subgrafo inducido por los nodos válidos,
+\[
+G_p = G[V_p],
+\]
+donde \(V_p\) representa los nodos que cumplen el predicado, no conserva las propiedades de navegabilidad del grafo original. Si \(G_p\) presenta múltiples componentes conectados, nodos aislados, bajo grado filtrado o mala cobertura desde los puntos de entrada, la búsqueda puede fallar aunque el índice HNSW completo tenga buen rendimiento en consultas no filtradas. Esta formulación se relaciona directamente con el enfoque de ACORN, que plantea que una estrategia ideal para búsqueda híbrida debería recorrer de manera efectiva el subgrafo inducido por los nodos que satisfacen el predicado \parencite{patel2024acorn}.
+
+Las estrategias genéricas de filtrado no resuelven completamente este problema. En el post-filtrado, el índice ANN recupera candidatos del espacio completo y luego descarta aquellos que no cumplen el filtro; si los vecinos más cercanos globales no satisfacen el predicado, el sistema puede devolver pocos resultados válidos o perder recall \parencite{patel2024acorn,amanbayev2026filtered}. En el prefiltrado exacto, el sistema puede restringir primero el conjunto válido y luego ejecutar una búsqueda exhaustiva, pero esta opción puede volverse costosa cuando el subconjunto filtrado es grande. En el filtrado durante la ejecución, el predicado se evalúa durante el recorrido del índice, pero su eficacia depende de cómo el índice preserve caminos útiles hacia nodos válidos \parencite{amanbayev2026filtered}.
+
+La problemática puede manifestarse de seis formas principales:
+\begin{enumerate}
+    \item \textbf{Pérdida de recall bajo filtros estrictos}: el sistema no recupera suficientes vecinos verdaderamente relevantes que cumplen el predicado.
+    \item \textbf{Aumento de latencia}: para compensar la baja probabilidad de encontrar nodos válidos, el algoritmo puede requerir mayor expansión de candidatos.
+    \item \textbf{Ineficiencia en distancia computada}: se calculan distancias hacia muchos nodos que no cumplen el filtro.
+    \item \textbf{Fragmentación topológica}: el subgrafo filtrado puede dividirse en múltiples componentes, impidiendo rutas efectivas hacia regiones relevantes.
+    \item \textbf{Mala entrada al subgrafo válido}: el punto de entrada global de HNSW puede no conducir rápidamente hacia nodos que satisfacen el predicado.
+    \item \textbf{Sobrecosto de memoria en soluciones densas}: estrategias basadas en aumentar globalmente la conectividad pueden mejorar recall, pero con mayor consumo de memoria y tiempo de construcción.
+\end{enumerate}
+
+La revisión de métodos graph-based ANNS muestra que el rendimiento de estos algoritmos no depende solo de la existencia del grafo, sino de componentes internos como selección de vecinos, conectividad y enrutamiento \parencite{wang2021comprehensive}. Por tanto, bajo filtros estrictos, la conectividad efectiva del subgrafo filtrado se convierte en un objeto de análisis relevante. En otras palabras, no basta con preguntar si HNSW es eficiente en búsqueda no filtrada; es necesario preguntar si el subgrafo inducido por el predicado conserva suficientes rutas navegables para recuperar vecinos válidos.
+
+Esta investigación delimita el problema hacia HNSW, filtros estrictos, métricas de conectividad del subgrafo filtrado y reparación topológica bajo presupuesto. No se pretende resolver todos los tipos de búsqueda híbrida ni construir una base de datos vectorial completa. El objetivo es estudiar un mecanismo específico de fallo y evaluar si una intervención ligera sobre la topología del grafo puede mejorar el trade-off entre recall, latencia y memoria.
+
+\section{Justificación del proyecto}
+
+Este proyecto se justifica desde tres perspectivas: científica, tecnológica y aplicada.
+
+Desde la perspectiva científica, la búsqueda filtrada sobre índices vectoriales es un problema abierto y relevante. La literatura muestra que ANNS es fundamental para recuperación y búsqueda a gran escala, que los métodos basados en grafos son una familia dominante y que HNSW es una referencia central dentro de esta familia \parencite{malkov2020efficient,wang2021comprehensive}. Sin embargo, FANNS introduce restricciones adicionales que no se explican únicamente por la geometría del espacio vectorial. La interacción entre predicados, selectividad, correlación filtro-vector y estructura del índice todavía requiere análisis experimental sistemático \parencite{amanbayev2026filtered}.
+
+Desde la perspectiva algorítmica, trabajos como ACORN y Filtered-DiskANN evidencian que la búsqueda filtrada requiere mecanismos más integrados que el simple post-filtrado. ACORN introduce el recorrido de subgrafos inducidos por predicados como principio para búsqueda híbrida \parencite{patel2024acorn}, mientras que Filtered-DiskANN incorpora información de etiquetas en la construcción del grafo para acelerar consultas filtradas \parencite{gollapudi2023filtered}. Estos antecedentes respaldan la relevancia de estudiar el grafo filtrado como estructura propia, no solamente como un resultado posterior al filtrado.
+
+Desde la perspectiva de sistemas, el paper de FANNS sobre bases de datos vectoriales muestra que el comportamiento observado depende del motor, del optimizador, del tipo de índice y de la estrategia de ejecución \parencite{amanbayev2026filtered}. Esto es importante porque una solución académica debe evitar conclusiones simplistas como “HNSW siempre falla” o “HNSW siempre domina”. La contribución debe ubicarse en condiciones específicas: filtros estrictos, degradación del subgrafo inducido por predicados, presupuesto de memoria y comparación contra controles justos.
+
+Desde la perspectiva aplicada, el proyecto busca desarrollar un prototipo reproducible que pueda ejecutarse bajo restricciones de recursos. Esto es relevante porque muchos sistemas de alto rendimiento asumen infraestructura amplia, memoria abundante o índices densos. DiskANN demuestra que el diseño de índices ANN debe considerar explícitamente memoria, almacenamiento, latencia y densidad de puntos cuando se escala a colecciones muy grandes \parencite{subramanya2019diskann}. Aunque esta tesis no pretende reproducir DiskANN ni evaluar miles de millones de vectores, sí adopta el principio de que la memoria y la latencia deben ser métricas centrales, no aspectos secundarios.
+
+La contribución propuesta, denominada PR-HNSW, no pretende reemplazar por completo métodos avanzados como ACORN, Filtered-DiskANN o DiskANN. Su objetivo es explorar una alternativa específica: diagnosticar cuándo el subgrafo filtrado pierde navegabilidad y aplicar reparación selectiva bajo presupuesto. Esta estrategia permite formular una investigación aplicada con hipótesis claras, baselines justos, métricas reproducibles y resultados falsables.
+
+El valor académico del proyecto reside en que no se limita a implementar un índice, sino que propone una metodología de análisis experimental para relacionar degradación topológica y pérdida de recall en búsqueda filtrada. El valor tecnológico reside en que la solución puede orientar diseños futuros de índices vectoriales más ligeros y conscientes de filtros. El valor metodológico reside en la construcción de un pipeline reproducible con control de semillas, \textit{ground truth} exacto, pruebas automatizadas y comparación contra baselines.
+
+\section{Objetivo general}
+
+Diseñar, implementar y evaluar una variante ligera y reproducible de HNSW filtrado, denominada PR-HNSW, que diagnostique la degradación topológica de subgrafos inducidos por predicados y aplique reparación selectiva bajo presupuesto para mejorar la recuperación de vecinos aproximados en consultas híbridas con filtros estrictos, considerando el trade-off entre recall, latencia y memoria.
+
+\section{Objetivos específicos}
+
+\begin{enumerate}
+    \item Caracterizar experimentalmente la degradación de navegabilidad en subgrafos HNSW inducidos por predicados bajo diferentes niveles de selectividad, correlación filtro-vector y distribución de datos.
+    \item Diseñar e implementar métricas diagnósticas para medir la fragmentación y navegabilidad del subgrafo filtrado, incluyendo componentes conectados, razón de nodos aislados, grado filtrado medio, razón del componente principal, selectividad global, selectividad local y correlación GLS.
+    \item Implementar baselines reproducibles para búsqueda filtrada, incluyendo HNSW con post-filtrado, prefiltrado exacto, reparación aleatoria de aristas, reparación aleatoria de portales y un control de expansión inspirado en ACORN.
+    \item Diseñar e implementar operadores de reparación selectiva para PR-HNSW, incluyendo reparación por puentes entre componentes, reparación por grado local y selección de portales de entrada al subgrafo filtrado.
+    \item Evaluar comparativamente PR-HNSW frente a los baselines definidos, usando métricas de recall@10, recall@100, latencia p50, latencia p95, latencia p99, QPS, memoria, cálculos de distancia, nodos visitados, tiempo de construcción y tiempo de reparación.
+    \item Analizar bajo qué condiciones PR-HNSW mejora el trade-off entre recall, latencia y memoria, y bajo qué condiciones estrategias alternativas como el prefiltrado exacto, índices particionados o estrategias especializadas pueden ser preferibles.
+    \item Documentar el sistema, los experimentos, las configuraciones, las pruebas y los resultados de forma reproducible, de modo que otros investigadores puedan replicar o extender el estudio.
+\end{enumerate}
+
+\section{Alcance y delimitaciones del proyecto}
+
+El alcance del proyecto comprende el diseño, implementación y evaluación experimental de una variante ligera de HNSW filtrado orientada a mejorar la navegación bajo predicados estrictos. El proyecto incluye la construcción de un prototipo científico, la generación de datasets controlados, la evaluación con baselines relevantes y el análisis de métricas de rendimiento y topología.
+
+El proyecto abordará los siguientes aspectos:
+\begin{itemize}
+    \item Construcción de un pipeline experimental reproducible para búsqueda HNSW filtrada.
+    \item Adaptación de datasets con filtros sintéticos.
+    \item Implementación de \textit{ground truth} exacto para evaluar recall filtrado.
+    \item Medición de selectividad global, selectividad local y correlación GLS.
+    \item Medición de propiedades topológicas del subgrafo inducido por predicados.
+    \item Implementación de operadores de reparación topológica bajo presupuesto.
+    \item Comparación contra baselines y controles aleatorios con presupuestos equivalentes.
+    \item Documentación de resultados, limitaciones y condiciones de aplicabilidad.
+\end{itemize}
+
+El proyecto no abordará inicialmente los siguientes aspectos:
+\begin{itemize}
+    \item Construcción de una base de datos vectorial de producción.
+    \item Reimplementación completa de ACORN, Milvus, Qdrant, Weaviate, pgvector, DiskANN o Filtered-DiskANN.
+    \item Evaluación distribuida a escala de miles de millones de vectores.
+    \item Optimización específica para GPU, Metal, Apple Neural Engine o hardware especializado.
+    \item Garantía de superioridad universal sobre todos los métodos de búsqueda filtrada.
+    \item Evaluación exhaustiva de todos los tipos de predicados posibles, como expresiones regulares complejas, joins relacionales o filtros semánticos evaluados por LLM.
+\end{itemize}
+
+La delimitación temporal y computacional del proyecto implica priorizar una evaluación controlada y científicamente defendible sobre un sistema industrial completo. Por ello, se trabajará inicialmente con prototipos reproducibles, datasets manejables y experimentos multi-semilla que permitan validar o refutar las hipótesis planteadas.
+
+La contribución esperada será válida si logra demostrar, bajo condiciones experimentales claramente documentadas, que la degradación topológica del subgrafo filtrado está relacionada con la pérdida de recall y que una reparación selectiva puede mejorar el rendimiento frente a controles aleatorios o estrategias genéricas, manteniendo un presupuesto de memoria explícito.
