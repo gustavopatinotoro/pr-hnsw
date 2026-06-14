@@ -42,9 +42,7 @@ La selectividad global del filtro no explica por sí sola la dificultad de la b�
 
 ### Documento de tesis en Overleaf
 
-> Pendiente de agregar enlace oficial de Overleaf.
-
-Cuando el documento esté creado en Overleaf, colocar aquí:
+Visitar página:
 
 ```text
 https://www.overleaf.com/project/6a2f0d202d5c85ff9553997a
@@ -75,7 +73,7 @@ Estos textos sostienen directamente la pregunta de investigación, las hipótesi
 
 | Clave                          | Documento                                                                                                  | Función dentro de la tesis                                                               |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `malkov2020hnsw`               | *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs* | Fundamento de HNSW                                                                       |
+| [`malkov2020hnsw`](https://ieeexplore.ieee.org/document/8594636)               | *Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs* | Fundamento de HNSW                                                                       |
 | `patel2024acorn`               | *ACORN: Performant and Predicate-Agnostic Search Over Vector Embeddings and Structured Data*               | Núcleo algorítmico de búsqueda híbrida y recorrido de subgrafos inducidos por predicados |
 | `amanbayev2026fanns`           | *Filtered Approximate Nearest Neighbor Search in Vector Databases: System Design and Performance Analysis* | Taxonomía FANNS, sistemas vectoriales, GLS y benchmarking                                |
 | `gollapudi2023filtereddiskann` | *Filtered-DiskANN: Graph Algorithms for Approximate Nearest Neighbor Search with Filters*                  | Baseline especializado de búsqueda filtrada                                              |
