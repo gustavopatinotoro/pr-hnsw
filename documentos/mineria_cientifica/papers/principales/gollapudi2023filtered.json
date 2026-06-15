@@ -1,0 +1,191 @@
+{
+    "paper_identity": {
+        "title": "Filtered − DiskANN: Graph Algorithms for Approximate Nearest Neighbor Search with Filters",
+        "authors": [
+            "Siddharth Gollapudi",
+            "Neel Karia",
+            "Varun Sivashankar",
+            "Ravishankar Krishnaswamy",
+            "Nikit Begwani",
+            "Swapnil Raz",
+            "Yiyong Lin",
+            "Yin Zhang",
+            "Neelam Mahapatro",
+            "Premukumar Srinivasan",
+            "Amit Singh",
+            "Harsha Vardhan Simhadri"
+        ],
+        "year": "2023",
+        "venue": "Proceedings of the ACM Web Conference 2023 (WWW '23)",
+        "doi_or_id": "10.1145/3543507.3583552",
+        "paper_type": "Experimental / Systems",
+        "research_domain": "Computer Science / Vector Databases",
+        "subfield": "Approximate Nearest Neighbor Search"
+    },
+    "scientific_problem": {
+        "problem": "Inefficient execution of vector similarity searches subject to hard metadata filter constraints.",
+        "motivation": "Web scale search and advertising need low query latency combined with high target recall precision values.",
+        "gap": "Prior index systems optimize search runtime filtering steps but do not adapt the graph's structural edge layout during construction.",
+        "hypothesis": "Embedding metadata properties directly into build-time edge selection functions preserves long-range routing connectivity for highly selective properties.",
+        "research_question": "Can metadata-aware graph topologies maintain high QPS configurations across extreme filter selectivities without inflating index sizes?",
+        "success_criteria": "Outperforming standard IVF inline methods, HNSW setups, and alternative graph systems under strict response latency conditions."
+    },
+    "concepts": [
+        {
+            "name": "Filter Specificity",
+            "type": "Metric",
+            "role": "Quantifies the ratio of elements matching a metadata property filter relative to the full dataset size.",
+            "evidence_label": "EXTRACTED"
+        },
+        {
+            "name": "FilteredRobustPrune",
+            "type": "Optimization Strategy",
+            "role": "Pruning criteria that drops redundant spatial edges while preserving metadata-navigable routing paths.",
+            "evidence_label": "EXTRACTED"
+        }
+    ],
+    "methods": [
+        {
+            "name": "FilteredVamana",
+            "role": "Incremental graph compiler that applies metadata pruning filters iteratively as individual elements are indexed.",
+            "novel_or_baseline": "Novel",
+            "input": "Dataset vector arrays, alpha index distribution settings, search scale arrays.",
+            "output": "Integrated unified directed search graph topology configuration.",
+            "claimed_advantage": "Faster indexing execution times and native support for continuous incremental vector data additions.",
+            "limitation": "Exhibits lower absolute query throughput capacity relative to the StitchedVamana variant.",
+            "evidence_label": "EXTRACTED"
+        },
+        {
+            "name": "StitchedVamana",
+            "role": "Batch graph index builder that cross-links independent categorical sub-graphs and applies global pruning constraints.",
+            "novel_or_baseline": "Novel",
+            "input": "Categorical partition arrays, small parameter limit definitions, target structural threshold caps.",
+            "output": "Cross-stitched structural lookup graph index architecture layout.",
+            "claimed_advantage": "Maximizes search throughput across highly competitive accuracy boundaries.",
+            "limitation": "Requires high indexing build times and lacks a native mechanism for real-time item deletions.",
+            "evidence_label": "EXTRACTED"
+        }
+    ],
+    "datasets": [
+        {
+            "name": "Turing",
+            "type": "Text Embedding",
+            "size": "2599968",
+            "dimensionality": "100",
+            "domain": "Enterprise Search Corpus",
+            "usage": "Evaluation / Performance Benchmarking",
+            "evidence_label": "EXTRACTED"
+        },
+        {
+            "name": "DANN",
+            "type": "Text Embedding",
+            "size": "3305317",
+            "dimensionality": "64",
+            "domain": "Sponsored Online Advertisements",
+            "usage": "Evaluation / Out-of-Core SSD Validation Scaling",
+            "evidence_label": "EXTRACTED"
+        }
+    ],
+    "metrics": [
+        {
+            "name": "Recall@10",
+            "definition": "The proportion of the true top-10 filtered nearest neighbors captured in the retrieved candidate set.",
+            "measures": "Algorithmic search accuracy",
+            "reported_value": ">90%",
+            "role": "Primary baseline accuracy condition metric",
+            "evidence_label": "EXTRACTED"
+        },
+        {
+            "name": "Queries Per Second (QPS)",
+            "definition": "The number of search operations processed per second under multi-threaded execution.",
+            "measures": "System throughput efficiency",
+            "reported_value": "Varies across charts (up to 10^5 factor improvements)",
+            "role": "Primary speed performance metric",
+            "evidence_label": "EXTRACTED"
+        }
+    ],
+    "baselines": [
+        {
+            "name": "IVF Inline-Processing",
+            "fairness": "Highly competitive; tuned across multiple cluster configurations up to 8192 centroids.",
+            "missing_baselines": "None",
+            "evidence_label": "EXTRACTED"
+        },
+        {
+            "name": "NHQ KGraph",
+            "fairness": "Evaluated using public research implementations under identical system runtime parameters.",
+            "missing_baselines": "None",
+            "evidence_label": "EXTRACTED"
+        }
+    ],
+    "claims": [
+        {
+            "id": "CL-1",
+            "claim": "Metadata-driven graph index topologies provide an order-of-magnitude QPS improvement over search-time filtering alternatives.",
+            "evidence": "Verified across Turing, Prep, and DANN evaluation benchmarks under varying filter selectivities.",
+            "evidence_strength": "Strong",
+            "risk": "Performance gains depend on target attributes matching index distributions.",
+            "evidence_label": "EXTRACTED"
+        }
+    ],
+    "limitations": [
+        {
+            "limitation": "Fails to support logical conjunction combinations (AND operations) natively inside graph optimization pruning loops.",
+            "severity": "Medium-High",
+            "evidence": "Scope defined strictly to single exact matches; compound logical terms require downstream post-merges.",
+            "evidence_label": "EXTRACTED"
+        }
+    ],
+    "research_gaps": [
+        {
+            "gap": "Lack of dynamic index repair strategies for point deletions in metadata-aware proximity graphs.",
+            "type": "Systems / Algorithmic Gap",
+            "explicit_or_inferred": "Explicit",
+            "opportunity": "Formulating structural repair criteria that preserve graph connectivity without requiring local sub-graph rebuilds.",
+            "evidence_label": "EXTRACTED"
+        }
+    ],
+    "mining_tags": {
+        "keywords": [
+            "Approximate Nearest Neighbor Search",
+            "Filtered Search",
+            "Graph Algorithms",
+            "Vector Search"
+        ],
+        "normalized_terms": [
+            "Proximity Graphs",
+            "Filter Selectivity",
+            "Throughput Efficiency"
+        ],
+        "topic_tags": [
+            "Vector Databases",
+            "Hybrid Query Optimization"
+        ],
+        "method_tags": [
+            "Vamana Optimization",
+            "Structural Pruning"
+        ],
+        "metric_tags": [
+            "Recall@k",
+            "QPS Extraction boundaries"
+        ],
+        "hardware_tags": [
+            "Out-of-Core SSD Maps",
+            "Multi-core Parallel Threads Scaling"
+        ],
+        "application_tags": [
+            "Sponsored Ad Matching",
+            "Enterprise Domain Recommenders"
+        ]
+    },
+    "review_scores": {
+        "novelty": "4.0",
+        "technical_depth": "4.5",
+        "mathematical_rigor": "3.5",
+        "experimental_strength": "5.0",
+        "reproducibility": "3.5",
+        "practical_impact": "5.0",
+        "scalability": "4.5",
+        "scientific_risk": "3.0"
+    }
+}

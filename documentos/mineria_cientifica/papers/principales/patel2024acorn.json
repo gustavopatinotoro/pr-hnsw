@@ -1,0 +1,104 @@
+{
+    "paper_identity": {
+        "title": "ACORN: Performant and Predicate-Agnostic Search Over Vector Embeddings and Structured Data",
+        "authors": [
+            "Liana Patel",
+            "Peter Kraft",
+            "Carlos Guestrin",
+            "Matei Zaharia"
+        ],
+        "year": "2024",
+        "venue": "arXiv Preprint",
+        "doi_or_id": "arXiv:2403.04871v1",
+        "paper_type": "Systems / Experimental",
+        "research_domain": "Vector Databases",
+        "subfield": "Hybrid Approximate Nearest Neighbor Search"
+    },
+    "scientific_problem": {
+        "problem": "Performance degradation and strict semantic limitations in hybrid vector-relational search under medium-high filter selectivities or negative query correlations.",
+        "motivation": "Modern multimodal applications need flexible, expressive, and unbounded predicates in runtime without causing exponential index growth or linear scan bottlenecks.",
+        "gap": "Existing methods either linearize search (pre-filtering), cause massive graph exploration loops (post-filtering), or lack general predicate expressiveness (specialized hardware/indices like Filtered-DiskANN).",
+        "hypothesis": "Dense structured neighborhoods generated during index time or expanded dynamically during query time can maintain local connectivity within arbitrary induced predicate subgraphs, emulating an ideal partitioned oracle.",
+        "research_question": "How to design a predicate-agnostic vector graph index that handles complex, runtime-defined structured filters with sublinear query latency?",
+        "success_criteria": "Achieving state-of-the-art throughput (QPS) at 0.9 fixed recall across standard benchmarks and large-scale synthetic workloads."
+    },
+    "methods": [
+        {
+            "name": "ACORN-γ",
+            "role": "High-efficiency query index variant with offline dense graph construction",
+            "novel_or_baseline": "Novel",
+            "input": "Vectors, structured attributes, parameters (M, efc, gamma, M_beta)",
+            "output": "Densified and pruned HNSW graph structure",
+            "claimed_advantage": "Up to 1,000x higher QPS at 0.9 recall, robust to negative query correlation.",
+            "limitation": "Higher indexing time (TTI) and memory footprint on uncompressed layers.",
+            "evidence_label": "[EXTRACTED]"
+        },
+        {
+            "name": "ACORN-1",
+            "role": "Resource-constrained index variant with query-time graph densification",
+            "novel_or_baseline": "Novel",
+            "input": "Vectors, structured attributes, standard HNSW configuration",
+            "output": "Standard HNSW graph structure traversed with a 2-hop search logic",
+            "claimed_advantage": "Low indexing overhead matching HNSW baseline, highly reduced RAM fingerprint.",
+            "limitation": "Averages 1.5x to 5x lower peak QPS compared to ACORN-gamma.",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "datasets": [
+        {
+            "name": "SIFT1M",
+            "type": "Image descriptors",
+            "size": "1,000,000",
+            "dimensionality": "128",
+            "domain": "Computer Vision",
+            "usage": "Low Cardinality Predicate Set (LCPS) Benchmarking",
+            "evidence_label": "[EXTRACTED]"
+        },
+        {
+            "name": "TripClick",
+            "type": "Medical passage clicklogs",
+            "size": "1,055,976",
+            "dimensionality": "768",
+            "domain": "Health Search Engines / Bio-Medical",
+            "usage": "High Cardinality Predicate Set (HCPS) Real C workloads",
+            "evidence_label": "[EXTRACTED]"
+        },
+        {
+            "name": "LAION-25M",
+            "type": "CLIP text-image embeddings",
+            "size": "24,653,427",
+            "dimensionality": "512",
+            "domain": "Multimodal Web Scraping",
+            "usage": "Large-Scale Scalability Evaluation",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "metrics": [
+        {
+            "name": "Recall@10",
+            "definition": "Intersection of ground-truth and retrieved set divided by 10",
+            "measures": "Accuracy of the approximate search",
+            "reported_value": "Fixed at 0.9 for baseline evaluations",
+            "role": "Effectiveness Metric",
+            "evidence_label": "[EXTRACTED]"
+        },
+        {
+            "name": "Queries Per Second (QPS)",
+            "definition": "Total successful queries processed per unit time",
+            "measures": "System throughput and raw latency response",
+            "reported_value": "2x to 1,000x baseline throughputs",
+            "role": "Efficiency Metric",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "review_scores": {
+        "novelty": "4",
+        "technical_depth": "4",
+        "mathematical_rigor": "3",
+        "experimental_strength": "5",
+        "reproducibility": "4",
+        "practical_impact": "5",
+        "scalability": "5",
+        "scientific_risk": "3"
+    }
+}

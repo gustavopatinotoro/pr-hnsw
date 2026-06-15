@@ -1,0 +1,96 @@
+{
+    "paper_identity": {
+        "title": "DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node",
+        "authors": [
+            "Suhas Jayaram Subramanya",
+            "Devvrit",
+            "Rohan Kadekodi",
+            "Ravishankar Krishaswamy",
+            "Harsha Vardhan Simhadri"
+        ],
+        "year": "2019",
+        "venue": "NeurIPS 2019",
+        "doi_or_id": "Not reported",
+        "paper_type": "Systems / Experimental",
+        "research_domain": "Computer Science / Vector Databases",
+        "subfield": "Approximate Nearest Neighbor Search"
+    },
+    "scientific_problem": {
+        "problem": "High infrastructure costs due to state-of-the-art ANNS graph algorithms requiring complete index storage in main memory RAM.",
+        "motivation": "Enabling billion-point vector similarity search on a single workstation under standard memory constraints without loss of recall precision.",
+        "gap": "Traditional memory-efficient approaches (inverted indexing + compression) suffer from significant lossy precision drops, while standard high-precision graph methods cannot scale to billions of points on a single limited node.",
+        "hypothesis": "A structured graph with low diameter and long-range routing capability can effectively execute concurrent low-latency lookups on solid-state drives using compact memory routing guides.",
+        "research_question": "Can an SSD-resident index achieve high-recall, low query latency, and high point density per node simultaneously?",
+        "success_criteria": "Serving >5000 QPS with <5ms mean latency and over 95% 1-recall@1 on a single 64GB RAM node."
+    },
+    "methods": [
+        {
+            "name": "Vamana Graph Construction",
+            "role": "Global indexing algorithm optimizing degree and graph diameter using structured iterative multi-pass traversal.",
+            "novel_or_baseline": "Novel",
+            "input": "Base point matrix, alpha pruning factor, graph degree limit R.",
+            "output": "Sparse directed navigable graph.",
+            "claimed_advantage": "Logarithmic convergence paths due to long-range connectivity injection via alpha tuning.",
+            "limitation": "Requires full data access passes, increasing initial indexing build pipelines.",
+            "evidence_label": "[EXTRACTED]"
+        },
+        {
+            "name": "DiskANN Beam Search",
+            "role": "Parallel look-ahead graph exploration strategy utilizing concurrent asynchronous disk hardware queues.",
+            "novel_or_baseline": "Novel",
+            "input": "Query embedding, beam width W, starting node medoid.",
+            "output": "Top-k nearest neighbor approximate candidates.",
+            "claimed_advantage": "Saves processing overhead by compressing independent disk rounds into grouped hardware IOPS operations.",
+            "limitation": "High beam configurations trigger operational computational waste.",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "datasets": [
+        {
+            "name": "ANN_SIFT1B",
+            "type": "uint8 image descriptors",
+            "size": "1,000,000,000",
+            "dimensionality": "128",
+            "domain": "Computer Vision",
+            "usage": "Billion-scale core evaluation",
+            "evidence_label": "[EXTRACTED]"
+        },
+        {
+            "name": "DEEP1B",
+            "type": "Float neural embeddings",
+            "size": "1,000,000,000",
+            "dimensionality": "96",
+            "domain": "Deep Learning Models",
+            "usage": "Billion-scale core validation",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "metrics": [
+        {
+            "name": "1-recall@1",
+            "definition": "Proportion of queries where the single extracted candidate is the actual closest geometric neighbor.",
+            "measures": "Retrieval accuracy performance.",
+            "reported_value": "95%+",
+            "role": "Core effectiveness evaluation metric",
+            "evidence_label": "[EXTRACTED]"
+        },
+        {
+            "name": "Mean Latency",
+            "definition": "Average time spent executing a distinct similarity search task.",
+            "measures": "System operational speed.",
+            "reported_value": "<3ms / <5ms",
+            "role": "Core efficiency evaluation metric",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "review_scores": {
+        "novelty": "5/5",
+        "technical_depth": "4/5",
+        "mathematical_rigor": "4/5",
+        "experimental_strength": "5/5",
+        "reproducibility": "4/5",
+        "practical_impact": "5/5",
+        "scalability": "5/5",
+        "scientific_risk": "2/5"
+    }
+}

@@ -1,0 +1,156 @@
+{
+    "paper_identity": {
+        "title": "Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs",
+        "authors": [
+            "Yu. A. Malkov",
+            "D. A. Yashunin"
+        ],
+        "year": "2020",
+        "venue": "IEEE Transactions on Pattern Analysis and Machine Intelligence",
+        "doi_or_id": "10.1109/TPAMI.2018.2889473",
+        "paper_type": "Experimental / Methodological",
+        "research_domain": "Information Retrieval",
+        "subfield": "Approximate Nearest Neighbor Search"
+    },
+    "scientific_problem": {
+        "problem": "Power-law scaling complexity and global connectivity loss during routing in proximity graphs.",
+        "motivation": "Sustained volume growth of big data requires sub-linear, highly scalable similarity search approaches.",
+        "gap": "Traditional proximity graphs experience logarithmic degree inflation along the greedy search path, driving polylogarithmic complexity scaling.",
+        "hypothesis": "Explicit link separation via multi-layer scaling paired with a diversity-driven heuristic achieves true logarithmic scaling.",
+        "research_question": "Can general metric spaces be indexed purely using proximity graphs to yield logarithmic query scaling without auxiliary structures?",
+        "success_criteria": "Outperforming tree-based, LSH, and quantization baselines across heterogeneous datasets while remaining robust against highly clustered geometries."
+    },
+    "concepts": [
+        {
+            "name": "Hierarchical NSW",
+            "type": "Algorithm",
+            "role": "Core multi-layer graph index proposed.",
+            "evidence_label": "[EXTRACTED]"
+        },
+        {
+            "name": "Probabilistic Skip List",
+            "type": "Theoretical Claim",
+            "role": "1D foundational structure guiding the multi-layer hierarchy abstraction.",
+            "evidence_label": "[EXTRACTED]"
+        },
+        {
+            "name": "Relative Neighborhood Graph",
+            "type": "Mathematical Object",
+            "role": "Topological subgraph targeted by the edge selection heuristic to guarantee global cluster connectivity.",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "methods": [
+        {
+            "name": "SELECT-NEIGHBORS-HEURISTIC (Algorithm 4)",
+            "role": "Pruning and selecting graph edges based on geometric diversity rather than absolute proximity.",
+            "novel_or_baseline": "Novel",
+            "input": "Base element q, candidates C, number of links M, layer level l",
+            "output": "Selected diverse neighbor set R",
+            "claimed_advantage": "Maintains cluster boundary connectivity, enhancing recall on non-uniform data.",
+            "limitation": "Increases index construction complexity.",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "datasets": [
+        {
+            "name": "SIFT",
+            "type": "Dense Vector",
+            "size": "1M / 10M / 200M",
+            "dimensionality": "128",
+            "domain": "Computer Vision",
+            "usage": "Evaluation / Benchmarking",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "metrics": [
+        {
+            "name": "Recall",
+            "definition": "Ratio of true nearest neighbors found over K requested.",
+            "measures": "Search accuracy",
+            "reported_value": "Continuous curves up to 0.99+",
+            "role": "Primary quality constraint",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "baselines": [
+        {
+            "name": "Facebook Faiss",
+            "fairness": "Fair, configured using high-performance open-source parameters.",
+            "missing_baselines": "None for production scales.",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "claims": [
+        {
+            "id": "C1",
+            "claim": "HNSW search scales logarithmically O(log N) with data size.",
+            "evidence": "Benchmarks on controlled hypercube synthetic datasets up to 30M entries.",
+            "evidence_strength": "Strong",
+            "risk": "Dimensionality inflation causes scaling degradation due to Delaunay graph convergence to complete graphs.",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "limitations": [
+        {
+            "limitation": "Loss of native peer-to-peer distribution mechanics due to top-layer access congestion.",
+            "severity": "High",
+            "evidence": "Stated explicitly in the discussion section.",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "research_gaps": [
+        {
+            "gap": "Lack of precise, non-degrading dynamic element deletion/removal mechanics.",
+            "type": "Methodological / Systems gap",
+            "explicit_or_inferred": "Explicit",
+            "opportunity": "Developing local graph healing repair routines for HNSW layers.",
+            "evidence_label": "[EXTRACTED]"
+        }
+    ],
+    "mining_tags": {
+        "keywords": [
+            "Approximate Nearest Neighbor Search",
+            "Proximity Graphs",
+            "Hierarchical Graphs"
+        ],
+        "normalized_terms": [
+            "ANNS",
+            "HNSW",
+            "Vector Search"
+        ],
+        "topic_tags": [
+            "Information Retrieval",
+            "Vector Databases"
+        ],
+        "method_tags": [
+            "Multi-layer graph",
+            "Greedy routing",
+            "Heuristic pruning"
+        ],
+        "metric_tags": [
+            "Recall",
+            "Latency",
+            "Distance computations"
+        ],
+        "hardware_tags": [
+            "Commodity CPU",
+            "Cache Prefetching"
+        ],
+        "application_tags": [
+            "Image Matching",
+            "Semantic Search",
+            "Genome Retrieval"
+        ]
+    },
+    "review_scores": {
+        "novelty": "5/5",
+        "technical_depth": "4/5",
+        "mathematical_rigor": "3/5",
+        "experimental_strength": "5/5",
+        "reproducibility": "5/5",
+        "practical_impact": "5/5",
+        "scalability": "4/5",
+        "scientific_risk": "3/5"
+    }
+}
